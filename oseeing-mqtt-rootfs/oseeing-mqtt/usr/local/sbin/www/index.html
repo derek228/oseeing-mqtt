@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continuous Display of JPG Images</title>
+    <style>
+        #image-container {
+            text-align: center;
+        }
+	#image-container img {
+            width: 500%; 
+            height: auto;
+            max-width: 800px; 
+        }
+    </style>
+</head>
+<body>
+    <div id="image-container"></div>
+
+    <script>
+        // Define the path where JPG images are stored on the server
+        var imagePath = "images/";
+
+        // Define the number of images and the starting index
+        var numImages = 9; // Update this with the actual number of images
+        var currentIndex = 1;
+
+        // Function to update the image source and display the next image
+        function displayNextImage() {
+            var imageContainer = document.getElementById('image-container');
+            var image = new Image();
+            image.src = imagePath + currentIndex + '.jpg'; // Adjust the naming convention of your images
+
+            // Event listener to display the next image when the current image is loaded
+            image.onload = function() {
+                imageContainer.innerHTML = ''; // Clear previous image
+                imageContainer.appendChild(image); // Append the new image
+                currentIndex = (currentIndex % numImages) + 1; // Move to the next image
+                setTimeout(displayNextImage, 500); // Adjust the time interval between images (in milliseconds)
+            };
+        }
+
+        // Start displaying images when the page is loaded
+        window.onload = displayNextImage;
+    </script>
+</body>
+</html>
+
