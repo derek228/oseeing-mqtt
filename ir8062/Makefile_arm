@@ -1,0 +1,25 @@
+.SUFFIXES : .x .o .c .s
+
+CC := gcc #arm-linux-gcc
+TARGET = main
+
+#CC := arm-linux-gcc
+#STRIP := arm-linux-strip
+#TARGET = ini-parse
+
+SRCS := ini-parser.c main.c
+#LIBS = -lcurl -lm #-lssl -lcrypto #-ljson-c -lnsl 
+all: 
+	$(CC) -static $(SRCS) -o $(TARGET) 
+#	$(STRIP) $(TARGET) $(LIBS) 
+
+clean:
+	rm -f *.o 
+	rm -f *.x 
+	rm -f *.flat
+	rm -f *.map
+	rm -f temp
+	rm -f *.img
+	rm -f $(TARGET)	
+	rm -f *.gdb
+	rm -f *.bak

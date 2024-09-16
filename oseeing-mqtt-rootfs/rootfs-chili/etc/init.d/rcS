@@ -1,0 +1,52 @@
+#!/bin/sh
+/bin/mount -t proc none /proc
+/bin/mount -t sysfs sysfs /sys
+/bin/mount -t ramfs /tmp
+/bin/mount -t ramfs /mnt
+/bin/mkdir /mnt/pts
+/bin/mount -t devpts devpts /dev/pts
+/bin/echo > /dev/mdev.seq
+/bin/echo /sbin/mdev > /proc/sys/kernel/hotplug
+/sbin/mdev -s
+insmod gpio-capture.ko | insmod gpio-capture-platform.ko
+
+date 122217202023
+if [ ! -f "/mnt/mtdblock1/leds" ]; then
+	cp "/leds" "/mnt/mtdblock1/leds"
+	echo "copy leds to mnt/mtdblock1"
+fi
+
+if [ ! -f "/mnt/mtdblock1/thermal.sh" ]; then
+	cp "/thermal.sh" "/mnt/mtdblock1/"
+	echo "copy thermal.sh to mnt/mtdblock1"
+fi
+
+if [ ! -f "/mnt/mtdblock1/ir8062.ini" ]; then
+	cp "/default.ini" "/mnt/mtdblock1/ir8062.ini"
+	echo "copy ir8062.ini to mnt/mtdblock1"
+fi
+
+if [ ! -f "/mnt/mtdblock1/ir8062" ]; then
+	cp "/ir8062" "/mnt/mtdblock1/ir8062"
+	echo "copy ir8062 to mnt/mtdblock1"
+fi
+
+if [ ! -f "/mnt/mtdblock1/uart" ]; then
+	cp "/uart" "/mnt/mtdblock1/uart"
+	echo "copy uart to mnt/mtdblock1"
+fi
+/etc/init.d/S50sshd start
+echo -e "root\nroot\n" | passwd root
+if [ $? -eq 0 ]; then
+	echo "set root password done"
+else
+	echo "set root password failed"
+fi
+
+#/thermal.sh
+/mnt/mtdblock1/thermal.sh
+mkdir -p /var/log/lighttpd/
+/usr/sbin/lighttpd start -f /usr/local/sbin/lighttpd.conf
+
+
+

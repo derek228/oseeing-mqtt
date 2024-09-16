@@ -1,0 +1,41 @@
+#!/bin/sh
+/bin/mount -t proc none /proc
+/bin/mount -t sysfs sysfs /sys
+/bin/mount -t ramfs /tmp
+/bin/mount -t ramfs /mnt
+/bin/mkdir /mnt/pts
+/bin/mount -t devpts devpts /dev/pts
+/bin/echo > /dev/mdev.seq
+/bin/echo /sbin/mdev > /proc/sys/kernel/hotplug
+/sbin/mdev -s
+insmod gpio-capture.ko | insmod gpio-capture-platform.ko
+
+date 122217202023
+if [ ! -f "/mnt/mtdblock1/leds" ]; then
+	cp "/leds" "/mnt/mtdblock1/leds"
+	echo "copy leds to mnt/mtdblock1"
+fi
+
+if [ ! -f "/mnt/mtdblock1/oseeing.sh" ]; then
+	cp "/oseeing.sh" "/mnt/mtdblock1/"
+	echo "copy oseeing.sh to mnt/mtdblock1"
+fi
+
+if [ ! -f "/mnt/mtdblock1/oseeing1s" ]; then
+	cp "/oseeing1s" "/mnt/mtdblock1/oseeing1s"
+	echo "copy oseeing1s to mnt/mtdblock1"
+fi
+
+/etc/init.d/S50sshd start
+echo -e "root\nroot\n" | passwd root
+if [ $? -eq 0 ]; then
+	echo "set root password done"
+else
+	echo "set root password failed"
+fi
+
+mkdir -p /mnt/mtdblock1/oseeing1s-config
+/mnt/mtdblock1/oseeing.sh
+
+
+
